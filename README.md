@@ -17,26 +17,25 @@ value equal to `true` will this middleware send anything to Rollbar. We include 
 __We provide mechanisms for easily santizing the store before logging (e.g. if you store access tokens in the redux store).__
 
 ## Installation
-NOTE: THIS PACKAGE IS NOT ON NPM YET SO THIS WILL NOT WORK YET
 
-Run `npm install --save rollbar-redux`.
+Run `npm install --save rollbar-redux-middleware`.
 
 ## Usage
 
 Import `rollbarMiddleware` function from package:
 
-```
-import rollbarMiddleware from 'rollbar-redux';
+```js
+import rollbarMiddleware from 'rollbar-redux-middleware';
 ```
 
 Import `rollbar` and configure:
-```
+```js
 import rollbar from 'rollbar';
 var Rollbar = new rollbar({accessToken: 'POST_CLIENT_ITEM_ACCESS_TOKEN'});
 ```
 
 Create middleware in your store creator:
-```
+```js
 export default function configureStore(initialState) {
   const rollbarRedux = rollbarMiddleware(Rollbar);
 
@@ -51,7 +50,7 @@ export default function configureStore(initialState) {
 ## State sanitization
 Consider the following state:
 
-```
+```js
 {
   user: {
     credentials: {
@@ -71,7 +70,7 @@ Consider the following state:
 If you want to sanitize the state before sending to Rollbar, we provide two mechanisms. The first is
 to include an array of keypaths that you wish to redact:
 
-```
+```js
 const keyPaths = [
   'billing.number',
   'user.credentials.token'
@@ -80,7 +79,7 @@ const keyPaths = [
 
 Then just pass this as the second parameter to `rollbarMiddleware`:
 
-```
+```js
 const rollbarRedux = rollbarMiddleware(Rollbar, keyPaths)
 ```
 
@@ -90,7 +89,7 @@ It accepts current application state and should return a state that will be sent
 To sanitize the example state above the same as the given keypaths, the function provided should be 
 similar to:
 
-```
+```js
 const stateSanitizer = function(state) {
   // make sure you don't change state tree
   const stateCopy = Object.assign({}, state);
