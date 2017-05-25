@@ -1,4 +1,4 @@
-# rollbar-redux
+# rollbar-redux-middleware
 
 Redux middleware that integrates with [Rollbar](https://rollbar.com/docs/notifier/rollbar.js/). This middleware assumes the use of 
 actions that conform to the [Flux Standard Action](https://github.com/acdlite/flux-standard-action) pattern. Essentially this means
@@ -21,7 +21,10 @@ Run `npm install --save rollbar-redux`.
 
 
 ## Usage
+NOTE: THIS PACKAGE IS NOT ON NPM YET SO THIS WILL NOT WORK YET
+
 Import `rollbarMiddleware` function from package:
+
 ```
 import rollbarMiddleware from 'rollbar-redux';
 ```
