@@ -1,4 +1,4 @@
-const decycle = (obj) => {
+export const decycle = (obj) => {
   let cache = []
 
   const stringified = JSON.stringify(obj, function(key, value) {
@@ -15,21 +15,21 @@ const decycle = (obj) => {
   return stringified
 }
 
-const setToValue = (obj, value, path) => {
+export const setToValue = (obj, value, path) => {
   if (!obj || typeof obj !== 'object') {
     return
   }
   path = path.split('.')
+  var tmp = obj;
   for (var i = 0, len = path.length; i < len - 1; i++) {
-    obj = obj[path[i]]
-    if (!obj || typeof obj !== 'object') {
-      return
-    }
+    obj = Object.assign({}, obj[path[i]])
+    tmp[path[i]] = obj
+    tmp = obj
   }
   obj[path[i]] = value
 }
 
-const sanitize = (keyPaths, state) => {
+export const sanitize = (keyPaths, state) => {
   if (typeof keyPaths === 'function') {
     return keyPaths(state)
   }
@@ -51,7 +51,7 @@ export default function createMiddleware(Rollbar, keyPaths) {
     }
 
     let stateToSend = store.getState()
-    if (keyPathsOrFunction) {
+    if (keyPaths) {
       stateToSend = sanitize(keyPaths, stateToSend)
     }
 

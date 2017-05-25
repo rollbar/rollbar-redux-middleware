@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.default = createMiddleware;
-var decycle = function decycle(obj) {
+var decycle = exports.decycle = function decycle(obj) {
   var cache = [];
 
   var stringified = JSON.stringify(obj, function (key, value) {
@@ -24,21 +24,21 @@ var decycle = function decycle(obj) {
   return stringified;
 };
 
-var setToValue = function setToValue(obj, value, path) {
+var setToValue = exports.setToValue = function setToValue(obj, value, path) {
   if (!obj || (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object') {
     return;
   }
   path = path.split('.');
+  var tmp = obj;
   for (var i = 0, len = path.length; i < len - 1; i++) {
-    obj = obj[path[i]];
-    if (!obj || (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object') {
-      return;
-    }
+    obj = Object.assign({}, obj[path[i]]);
+    tmp[path[i]] = obj;
+    tmp = obj;
   }
   obj[path[i]] = value;
 };
 
-var sanitize = function sanitize(keyPaths, state) {
+var sanitize = exports.sanitize = function sanitize(keyPaths, state) {
   if (typeof keyPaths === 'function') {
     return keyPaths(state);
   }
@@ -64,7 +64,7 @@ function createMiddleware(Rollbar, keyPaths) {
         }
 
         var stateToSend = store.getState();
-        if (keyPathsOrFunction) {
+        if (keyPaths) {
           stateToSend = sanitize(keyPaths, stateToSend);
         }
 
