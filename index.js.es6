@@ -42,6 +42,8 @@ const sanitize = (keyPaths, state) => {
   return updatedState
 }
 
+const isError = (action) => action.error === true
+
 export default function createMiddleware(Rollbar, keyPaths) {
   return store => next => action => {
     if (!isError(action)) {

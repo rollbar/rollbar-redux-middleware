@@ -51,6 +51,10 @@ var sanitize = function sanitize(keyPaths, state) {
   return updatedState;
 };
 
+var isError = function isError(action) {
+  return action.error === true;
+};
+
 function createMiddleware(Rollbar, keyPaths) {
   return function (store) {
     return function (next) {
