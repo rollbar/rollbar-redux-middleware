@@ -17,11 +17,11 @@ value equal to `true` will this middleware send anything to Rollbar. We include 
 __We provide mechanisms for easily santizing the store before logging (e.g. if you store access tokens in the redux store).__
 
 ## Installation
+NOTE: THIS PACKAGE IS NOT ON NPM YET SO THIS WILL NOT WORK YET
+
 Run `npm install --save rollbar-redux`.
 
-
 ## Usage
-NOTE: THIS PACKAGE IS NOT ON NPM YET SO THIS WILL NOT WORK YET
 
 Import `rollbarMiddleware` function from package:
 
@@ -31,7 +31,7 @@ import rollbarMiddleware from 'rollbar-redux';
 
 Import `rollbar` and configure:
 ```
-import rollbar from `rollbar`;
+import rollbar from 'rollbar';
 var Rollbar = new rollbar({accessToken: 'POST_CLIENT_ITEM_ACCESS_TOKEN'});
 ```
 
