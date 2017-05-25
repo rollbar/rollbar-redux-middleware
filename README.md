@@ -7,7 +7,7 @@ that actions of the following form
 ```js
 {
     error: true,
-		payload: new Error()
+    payload: new Error()
 }
 ```
 
