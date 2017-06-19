@@ -21,6 +21,60 @@ test('non-errors are ignored', () => {
   expect(Rollbar).not.toHaveBeenCalled()
 })
 
+describe('wrapping action', () => {
+  let action = {
+    type: 'I_AM_BAD',
+    payload: 'bork'
+  }
+  let goodAction = {
+    type: 'I_AM_GOOD',
+    payload: 'bork'
+  }
+  let store = {
+    getState: jest.fn(() => {
+      return {
+        a: 1,
+        b: 42
+      }
+    })
+  }
+  let next = jest.fn((a) => {
+    if (a.type === 'I_AM_BAD') {
+      throw new Error(a.payload)
+    } else {
+      return a.payload
+    }
+  })
+  let Rollbar = {
+    error: jest.fn()
+  }
+  let middleware = reduxMiddleware(Rollbar, null, true)
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('when action fails', () => {
+    test('rollbar is called', () => {
+      middleware(store)(next)(action)
+      expect(Rollbar.error).toHaveBeenCalled()
+    })
+
+    test('rollbar gets the expected data', () => {
+      middleware(store)(next)(action)
+      expect(Rollbar.error).toBeCalledWith(new Error(action.payload), {action: JSON.stringify(action), state: '{"a":1,"b":42}'})
+    })
+  })
+
+  describe('when action does not fail', () => {
+    test('rollbar is not called', () => {
+      middleware(store)(next)(goodAction)
+      expect(Rollbar.error).not.toHaveBeenCalled()
+    })
+  })
+})
+
+
 describe('with an error', () => {
   let action = {
     type: 'THIS_IS_BROKEN',
@@ -194,14 +248,14 @@ describe('sanitize', () => {
       return Object.assign({bork: true}, state)
     })
     let state = {a: 1}
-    let newState = sanitize(keyPaths, state)
+    let newState = sanitize(state, keyPaths)
     expect(newState.a).toBe(1)
     expect(newState.bork).toBe(true)
   })
   test('if keyPaths is an array, it replaces what it should', () => {
     let keyPaths = ['a.b', 'c.d', 'e']
     let state = {a: {b: 'bad', x: 'good'}, c: {d: 'bad2', y: 'good2'}, e: 'worst', f: 'bork'}
-    let newState = sanitize(keyPaths, state)
+    let newState = sanitize(state, keyPaths)
     expect(state.a.b).toBe('bad')
     expect(newState.a.b).toBe('********')
     expect(newState.a.x).toBe('good')

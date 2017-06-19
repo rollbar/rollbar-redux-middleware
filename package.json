@@ -1,6 +1,6 @@
 {
   "name": "rollbar-redux-middleware",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Redux middleware that makes including redux state with errors sent to rollbar easier.",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "middleware",
     "react"
   ],
-  "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rollbar/rollbar-redux/issues"

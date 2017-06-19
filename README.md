@@ -11,8 +11,10 @@ that actions of the following form
 }
 ```
 
-are considered errors to be reported to Rollbar where the error is in the payload field. Only if there is a key of `error` with a
-value equal to `true` will this middleware send anything to Rollbar. We include the payload as well as the entire redux store state.
+are considered errors to be reported to Rollbar where the error is in the payload field.
+We include the payload as well as the entire redux store state.
+Additionally, we provide a configuration option to wrap all actions in a try/catch block rather than
+simply using FSA style actions to denote errors.
 
 __We provide mechanisms for easily santizing the store before logging (e.g. if you store access tokens in the redux store).__
 
@@ -46,6 +48,21 @@ export default function configureStore(initialState) {
   );
 }
 ```
+
+## Wrapping actions in a try/catch
+
+In order to wrap actions in a try/catch block, you must pass three parameters to the function
+exported by this package:
+
+```js
+import rollbarMiddleware from 'rollbar-redux-middleware';
+const rollbarRedux = rollbarMiddleware(Rollbar, keyPaths, true);
+```
+
+The second parameter is used for state sanitization described below. If you do not need or want that
+functionality, simply pass an empty array, null, or the identity function as the second parameter.
+The third parameter of `true` indicates that you do want to wrap actions in a try/catch block. The
+first parameter is a configured Rollbar instance to use for reporting.
 
 ## State sanitization
 Consider the following state:

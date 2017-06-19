@@ -29,7 +29,7 @@ export const setToValue = (obj, value, path) => {
   obj[path[i]] = value
 }
 
-export const sanitize = (keyPaths, state) => {
+export const sanitize = (state, keyPaths) => {
   if (typeof keyPaths === 'function') {
     return keyPaths(state)
   }
@@ -43,22 +43,26 @@ export const sanitize = (keyPaths, state) => {
 }
 
 const isError = (action) => action.error === true
+const stateForError = (s, ks) => ks ? decycle(sanitize(s, ks)) : decycle(s)
 
-export default function createMiddleware(Rollbar, keyPaths) {
+export default function createMiddleware(Rollbar, keyPaths, wrapAction) {
   return store => next => action => {
     if (!isError(action)) {
+      if (wrapAction) {
+        try {
+          return next(action)
+        } catch (err) {
+          return Rollbar.error(err, {
+            action: decycle(action),
+            state: stateForError(store.getState(), keyPaths)
+          })
+        }
+      }
       return next(action)
     }
 
-    let stateToSend = store.getState()
-    if (keyPaths) {
-      stateToSend = sanitize(keyPaths, stateToSend)
-    }
-
-    const decycledState = decycle(stateToSend)
-
     Rollbar.error(action.payload, {
-      state: decycledState,
+      state: stateForError(store.getState(), keyPaths)
     })
 
     return next(action)

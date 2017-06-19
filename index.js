@@ -38,7 +38,7 @@ var setToValue = exports.setToValue = function setToValue(obj, value, path) {
   obj[path[i]] = value;
 };
 
-var sanitize = exports.sanitize = function sanitize(keyPaths, state) {
+var sanitize = exports.sanitize = function sanitize(state, keyPaths) {
   if (typeof keyPaths === 'function') {
     return keyPaths(state);
   }
@@ -54,24 +54,30 @@ var sanitize = exports.sanitize = function sanitize(keyPaths, state) {
 var isError = function isError(action) {
   return action.error === true;
 };
+var stateForError = function stateForError(s, ks) {
+  return ks ? decycle(sanitize(s, ks)) : decycle(s);
+};
 
-function createMiddleware(Rollbar, keyPaths) {
+function createMiddleware(Rollbar, keyPaths, wrapAction) {
   return function (store) {
     return function (next) {
       return function (action) {
         if (!isError(action)) {
+          if (wrapAction) {
+            try {
+              return next(action);
+            } catch (err) {
+              return Rollbar.error(err, {
+                action: decycle(action),
+                state: stateForError(store.getState(), keyPaths)
+              });
+            }
+          }
           return next(action);
         }
 
-        var stateToSend = store.getState();
-        if (keyPaths) {
-          stateToSend = sanitize(keyPaths, stateToSend);
-        }
-
-        var decycledState = decycle(stateToSend);
-
         Rollbar.error(action.payload, {
-          state: decycledState
+          state: stateForError(store.getState(), keyPaths)
         });
 
         return next(action);
