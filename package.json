@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "./node_modules/babel-cli/bin/babel.js --presets es2015 index.js.es6 -o index.js"
+    "build": "./node_modules/@babel/cli/bin/babel.js --presets es2015 index.js.es6 -o index.js"
   },
   "repository": {
     "type": "git",
@@ -23,12 +23,12 @@
   },
   "homepage": "https://github.com/rollbar/rollbar-redux#readme",
   "devDependencies": {
-    "babel-cli": "^7.0.0-beta.3",
-    "babel-core": "^7.0.0-beta.3",
-    "babel-jest": "^24.9.0",
-    "babel-polyfill": "^7.0.0-beta.3",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/polyfill": "^7.10.4",
     "babel-preset-es2015": "^7.0.0-beta.3",
-    "babel-runtime": "^7.0.0-beta.3",
-    "jest": "^24.9.0"
+    "@babel/runtime": "^7.11.2",
+    "babel-jest": "^26.3.0",
+    "jest": "^26.3.0"
   }
 }
